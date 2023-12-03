@@ -11,9 +11,9 @@
 #include <chrono>
 
 using namespace std;
-
+//grid = string v;
 using point = pair<int,int>;
-using vertex = tuple<int, pair<int,int>, string>;
+using vertex = tuple<int, point, string>;
 
 class Display {
     public :
@@ -225,15 +225,14 @@ int ida_star (const string &grid) {
 
     int maxdepth = hamming (grid);
     vertex start = {maxdepth, locate (grid, 0), grid};
-    /*
     stack<vertex> path;
 
     path.push (start);
 
     int cycle = 5;
 
+
     while (cycle-->0) {
-      /*
         int t = search (path, 0, maxdepth);
         //cout << visit.size() << " ";
         if (t == -1) break;
@@ -241,6 +240,7 @@ int ida_star (const string &grid) {
         maxdepth = t;
     }
 
+    /*
     */
     return -1;
 }
@@ -268,14 +268,14 @@ int main () {
     auto start = std::chrono::high_resolution_clock::now();
 
     vector<vector<int>> grid {{15,10,11,5},{14,1,3,2},{6,12,13,9},{8,7,4,0}};
-    sliding (grid);
+    // sliding (grid);
     //grid = {{1,8,7}, {3,0,5},{4,6,2}};
     grid = {{16,12,1,14,0,13},{5,27,29,17,21,23},{31,26,33,2,20,4},{15,8,30,32,35,24},{28,9,19,3,34,7},{6,10,18,22,11,25}};
     sliding (grid);
 
     grid = {{1,14,2,4,6,18},{9,13,3,17,11,33},{19,7,16,10,5,12},{8,26,20,15,22,24},{21,31,27,29,23,30},{25,0,32,28,34,35}};
-    sliding (grid);
-    /*
+    // sliding (grid);
+
     /*
     */
     auto end = std::chrono::high_resolution_clock::now();

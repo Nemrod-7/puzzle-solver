@@ -8,13 +8,14 @@
 
 #include <random>
 #include <chrono>
-
+// grid = vector<vector<int>>
 using namespace std;
 
 vector<vector<int>> goal {{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,0}};
 
 using point = pair<int,int>;
-using matrix = vector<vector<int>>;
+using board = vector<vector<int>>;
+using vertex = tuple<int, point, vector<vector<int>>>;
 
 class Display {
     public :
@@ -90,42 +91,7 @@ point locate (const vector<vector<int>> &grid, int num) { // locate tile
 bool is_inside (point p, int size) {
     return p.first >= 0 && p.second >= 0 && p.first < size && p.second < size;
 }
-/*
-int dfs (vertex curr, int &node, int cost, int maxdepth) {
-    node++;
-    auto [dist, g,slid, grid] = curr;
-    int estimate = cost + dist;
 
-    if (estimate > maxdepth) return estimate;
-
-    if (manhattan (grid) == 0) {
-        Display::graph(grid);
-        return -cost;
-    }
-
-    int minv = numeric_limits<int>::max(), depth;
-
-    for (auto &dir : compass) {
-        point nxt = slid + dir;
-
-        if (is_inside (nxt, grid.size())) {
-
-            swap (grid[slid.second][slid.first], grid[nxt.second][nxt.first]);
-            int alt = manhattan (grid);
-
-            depth = dfs ({alt, nxt, grid}, node, cost + 1, maxdepth);
-
-            if (depth <= 0) return depth;
-            else if (depth < minv) minv = depth;
-
-            swap (grid[slid.second][slid.first], grid[nxt.second][nxt.first]);
-        }
-    }
-    return minv;
-}
-*/
-
-using vertex = tuple<int, point, vector<vector<int>>>;
 
 int hamming (const vector<vector<int>> &grid) { // number misplaced tiles
   int index = 1, cnt = 0;
@@ -182,7 +148,7 @@ int linearcflt (const vector<vector<int>> &grid) {
     return cnt;
 }
 
-int nLinearConflicts (const matrix &a, const matrix &b) {
+int nLinearConflicts (const board &a, const board &b) {
   int N = a.size(), conflicts = 0;
   int pR[(N * N) + 1], pC[(N * N) + 1];
 
@@ -301,17 +267,14 @@ int main () {
 
   grid = {{1,14,2,4,6,18},{9,13,3,17,11,33},{19,7,16,10,5,12},{8,26,20,15,22,24},{21,31,27,29,23,30},{25,0,32,28,34,35}};
   sliding(grid);
-  /*
-  */
-  /*
-  /*
-  */
+
   // cntline (grid, sweep)
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = end - start;
   std::cout << "\nProcess took " << elapsed.count()  << " ms" << std::endl;
 }
 
+/*
 int findDistance(vector<vector<int>> board) {
   	int dist = 0;
 
@@ -325,7 +288,7 @@ int findDistance(vector<vector<int>> board) {
 
   	return dist;
 }
-double ManHattan2 (const matrix &a, const matrix &b) {
+double ManHattan2 (const board &a, const board &b) {
 		int N = a.size(), sum = 0;
 
 		int pR[(N * N) + 1];
@@ -344,10 +307,43 @@ double ManHattan2 (const matrix &a, const matrix &b) {
   					      sum += abs(pR[b[r][c]] - r) + abs(pC[b[r][c]] - c);
 		return sum;
 }
-double HammingDistance2 (const matrix &a, const matrix &b) {
+double HammingDistance2 (const board &a, const board &b) {
     int conflicts = 0;
     for (int i = 0; i < a.size() ; i++)
         for (int j = 0; j < a.size() ; j++)
             if (a[i][j] && a[i][j] != b[i][j]) conflicts++;
     return conflicts;
 }
+int dfs (vertex curr, int &node, int cost, int maxdepth) {
+    node++;
+    auto [dist, g,slid, grid] = curr;
+    int estimate = cost + dist;
+
+    if (estimate > maxdepth) return estimate;
+
+    if (manhattan (grid) == 0) {
+        Display::graph(grid);
+        return -cost;
+    }
+
+    int minv = numeric_limits<int>::max(), depth;
+
+    for (auto &dir : compass) {
+        point nxt = slid + dir;
+
+        if (is_inside (nxt, grid.size())) {
+
+            swap (grid[slid.second][slid.first], grid[nxt.second][nxt.first]);
+            int alt = manhattan (grid);
+
+            depth = dfs ({alt, nxt, grid}, node, cost + 1, maxdepth);
+
+            if (depth <= 0) return depth;
+            else if (depth < minv) minv = depth;
+
+            swap (grid[slid.second][slid.first], grid[nxt.second][nxt.first]);
+        }
+    }
+    return minv;
+}
+*/
