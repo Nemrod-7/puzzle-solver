@@ -1,4 +1,4 @@
-# Sliding Puzzle Solver
+# Sliding Puzzle Solver (in progress)
 
 A sliding puzzle is a combination puzzle that challenges a player to slide (frequently flat) pieces along certain routes (usually on a board) to establish a certain end-configuration.
 
