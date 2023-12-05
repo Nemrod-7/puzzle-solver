@@ -4,7 +4,6 @@
 #include <map>
 #include <queue>
 #include <stack>
-#include <tuple>
 #include <limits>
 
 #include <random>
@@ -20,13 +19,12 @@ struct vertex {
     point p;
     string grid;
 };
-//using vertex = tuple<int, point, string>;
+
 struct comp {
     bool operator()(const vertex &a, const vertex &b ) {
         return (a.dist == b.dist) ?  a.move > b.move : a.dist > b.dist;
     }
 };
-
 
 const point operator + (const point& a, const point& b) { return {a.x + b.x, a.y + b.y}; }
 const bool operator < (const point &a, const point &b) { return (a.x == b.x) ? a.y < b.y : a.x < b.x; }
@@ -79,7 +77,7 @@ int inversions (const string &grid) { // inversion
     return inv;
 }
 
-int hamming (const string &grid) { // sum of misplaced tiles distance
+int hamming (const string &grid) { // sum of misplaced tiles distances
     int sum = 0;
 
     for (int i = 0; i < grid.size(); i++) {
@@ -170,9 +168,7 @@ void a_star (vertex start) {
                 swap (grid[ida], grid[idb]);
 
                 int alt = hamming (grid) + linearcflt (grid) * 1.5 ;
-                alt = hamming (grid);
-                alt = inversions(grid);
-                // cout << linearcflt (grid) << ' ';
+
                 if (!visited[grid]) {
                     vertex nextv {alt, moves + 1, nxt, grid};
                     visited[grid] = true;
@@ -192,8 +188,8 @@ bool is_solvable (string grid) {
     if (N % 2 == 1) {
         return inv % 2;
     }
-    
-    return locate(grid, 0).y) % 2 != inv % 2;
+
+    return locate(grid, 0).y % 2 != inv % 2;
 }
 vector<int> sliding (vector<vector<int>> input) {
     vector<int> solution;
@@ -224,9 +220,9 @@ int main () {
 
     vector<vector<int>> grid {{15,10,11,5},{14,1,3,2},{6,12,13,9},{8,7,4,0}};
     grid = {{1,8,7}, {3,0,5},{4,6,2}};
-    sliding (grid);
 
      grid = {{16,12,1,14,0,13},{5,27,29,17,21,23},{31,26,33,2,20,4},{15,8,30,32,35,24},{28,9,19,3,34,7},{6,10,18,22,11,25}};
+     sliding (grid);
 
     // grid = {{1,14,2,4,6,18},{9,13,3,17,11,33},{19,7,16,10,5,12},{8,26,20,15,22,24},{21,31,27,29,23,30},{25,0,32,28,34,35}};
     // sliding (grid);
