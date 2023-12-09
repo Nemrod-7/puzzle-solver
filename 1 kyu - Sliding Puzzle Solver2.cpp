@@ -65,7 +65,7 @@ int hamming (const vector<int> &curr) { // sum of misplaced tiles manhattan dist
             int j = curr[i] - 1;
             sum += abs (i % N - j % N) + abs (i / N - j / N);
             //point a = make_pair (i % N, i / N), b = make_pair (j % N, j / N);
-            //sum += distance (a, b);
+            //sum += distance a, b);
         }
     }
 

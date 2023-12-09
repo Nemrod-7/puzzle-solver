@@ -78,14 +78,14 @@ int inversions (const string &grid) { // inversion
 }
 
 int hamming (const string &grid) { // sum of misplaced tiles distances
-    int sum = 0;
+    int sum = 0, dist;
 
     for (int i = 0; i < grid.size(); i++) {
         if (grid[i] != 0) {
             int j = grid[i] - 1;
-            sum += abs (i % N - j % N) + abs (i / N - j / N);
-            //point a = make_pair (i % N, i / N), b = make_pair (j % N, j / N);
-            //sum += distance (a, b);
+            dist = abs (i % N - j % N) + abs (i / N - j / N);
+            // cout <<  (N - i / N) << ' ';
+            sum += dist * (N - i / N);
         }
     }
 
@@ -167,7 +167,7 @@ void a_star (vertex start) {
 
                 swap (grid[ida], grid[idb]);
 
-                int alt = hamming (grid) + linearcflt (grid) * 1.5 ;
+                int alt = hamming (grid) /* + linearcflt (grid) * 1.5 */ ;
 
                 if (!visited[grid]) {
                     vertex nextv {alt, moves + 1, nxt, grid};
@@ -241,4 +241,24 @@ bool is_complete (const string &grid, int sweep) { // check for complete line
     }
 
     return true;
+}
+
+int hamming2 (const string &grid) {
+  int sum = 0, dist, coef;
+
+  for (int i = 0; i < grid.size(); i++) {
+      if (grid[i] != 0) {
+          int j = grid[i] - 1;
+          dist = abs (i % N - j % N) + abs (i / N - j / N);
+
+          // if (i / size == phase || i % size == phase) {
+          //     coef = 2;
+          // } else {
+          //     coef = 1;
+          // }
+          sum += dist * coef;
+      }
+  }
+
+  return sum;
 }
