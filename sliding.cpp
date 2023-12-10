@@ -113,7 +113,7 @@ int linearcflt (const string &grid) {
             for (int r = x + 1; r < N; r++) {
                 int k = y * N + r;
 
-                if (grid[j] && grid[k] && grid[j] != j + 1 && grid[k] != k + 1
+                if (grid[j] && grid[k]s && grid[j] != j + 1 && grid[k] != k + 1
                         && (irow >> j &1UL) && (irow >> k &1UL) ) {
 
                     if (grid[j] > grid[k] && j < k) cnt++;
