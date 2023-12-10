@@ -145,12 +145,12 @@ void a_star (vertex start) {
         auto [state, now, grid] = q1.top();
         q1.pop();
 
-        // if (is_line (grid, line)) {
-        //     line++;
-        //     // Display::board (grid);
-        //     // cout << "::" << cycle << "::\n";
-        //     // break;
-        // }
+        if (is_line (grid, line)) {
+            line++;
+            // Display::board (grid);
+            // cout << "::" << cycle << "::\n";
+            // break;
+        }
         if (now.y < line) continue;
 
         if (state == 0) {

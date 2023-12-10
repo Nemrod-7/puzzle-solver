@@ -76,7 +76,6 @@ int inversions (const string &grid) { // inversion
 
     return inv;
 }
-
 int hamming (const string &grid) { // sum of misplaced tiles distances
     int sum = 0, dist;
 
@@ -84,8 +83,7 @@ int hamming (const string &grid) { // sum of misplaced tiles distances
         if (grid[i] != 0) {
             int j = grid[i] - 1;
             dist = abs (i % N - j % N) + abs (i / N - j / N);
-            // cout <<  (N - i / N) << ' ';
-            sum += dist * (N - i / N);
+            sum += dist;
         }
     }
 
@@ -113,7 +111,7 @@ int linearcflt (const string &grid) {
             for (int r = x + 1; r < N; r++) {
                 int k = y * N + r;
 
-                if (grid[j] && grid[k]s && grid[j] != j + 1 && grid[k] != k + 1
+                if (grid[j] && grid[k] && grid[j] != j + 1 && grid[k] != k + 1
                         && (irow >> j &1UL) && (irow >> k &1UL) ) {
 
                     if (grid[j] > grid[k] && j < k) cnt++;
@@ -167,7 +165,7 @@ void a_star (vertex start) {
 
                 swap (grid[ida], grid[idb]);
 
-                int alt = hamming (grid) /* + linearcflt (grid) * 1.5 */ ;
+                int alt = hamming (grid) + linearcflt (grid) * 1.6 ;
 
                 if (!visited[grid]) {
                     vertex nextv {alt, moves + 1, nxt, grid};
@@ -181,7 +179,6 @@ void a_star (vertex start) {
     }
 
 }
-
 bool is_solvable (string grid) {
     int inv = inversions(grid);
 
@@ -191,24 +188,92 @@ bool is_solvable (string grid) {
 
     return locate(grid, 0).y % 2 != inv % 2;
 }
-vector<int> sliding (vector<vector<int>> input) {
-    vector<int> solution;
-    string grid;
-    point slider;
 
+void lateral (string &grid, point &p, int col) {
+    point nxt;
+
+    while (p.x != col) {
+        nxt = p;
+        if (col < p.x) {
+            p.x--;
+        } else if (col > p.x) {
+            p.x++;
+        }
+        swap(grid[p.y * N + p.x], grid[nxt.y * N + nxt.x]);
+    }
+}
+void vertical (string &grid, point &now, int row) {
+    point nxt;
+
+    while (now.y != row) {
+        nxt = now;
+        if (row < now.y) {
+            now.y--;
+        } else if (row > now.y) {
+            now.y++;
+        }
+        swap(grid[nxt.y * N + nxt.x], grid[now.y * N + now.x]);
+    }
+}
+void moveup (string &grid, point &now, int tile) {
+    point num = locate(grid, tile);
+    int row = tile / N;
+
+    while (num.y > row) {
+
+      if (num.y < now.y) { // if the slider is under the tile
+            if (num.x > 0) { // move to the left
+                lateral (grid, now, num.x - 1);
+            } else { // else to the right
+                lateral (grid, now, num.x + 1);
+            }
+        } else if (num.y == now.y) {
+            if (num.x > now.x) {
+                lateral(grid, now, num.x - 1);
+            } else {
+                lateral(grid, now, num.x + 1);
+            }
+        }
+
+        if (now.y > 0) { // move up
+            vertical (grid, now, num.y - 1);
+        }
+        if (num.x != now.x) {
+            lateral (grid, now, num.x);
+        }
+        vertical (grid, now, num.y);
+
+        num = locate(grid,tile);
+    }
+}
+
+vector<int> sliding (vector<vector<int>> input) {
     N = input.size();
+
+    int half = (N * N) / 2;
+    point slider;
+    string grid;
+    vector<int> solution;
+
     for (int y = 0; y < N; y++){
         for (int x = 0; x < N; x++) {
             grid += (input[y][x]);
             if (input[y][x] == 0) slider = {x,y};
         }
     }
+    // Display::board(grid);
+    // cout << "score : " << hamming(grid) << "\n";
 
     if (!is_solvable(grid)) {
-        //return {};
+        return {};
     }
 
-    //Display::board(exp);
+    for (int i = 1; i < half; i++) {
+        // moveup (grid, slider, i);
+    }
+
+    // Display::board(grid);
+    // cout << "score : " << hamming(grid) << "\n";
     vertex start = {hamming(grid), 0, slider, grid};
     a_star (start);
 
@@ -221,44 +286,13 @@ int main () {
     vector<vector<int>> grid {{15,10,11,5},{14,1,3,2},{6,12,13,9},{8,7,4,0}};
     grid = {{1,8,7}, {3,0,5},{4,6,2}};
 
-     grid = {{16,12,1,14,0,13},{5,27,29,17,21,23},{31,26,33,2,20,4},{15,8,30,32,35,24},{28,9,19,3,34,7},{6,10,18,22,11,25}};
-     sliding (grid);
+    grid = {{16,12,1,14,0,13},{5,27,29,17,21,23},{31,26,33,2,20,4},{15,8,30,32,35,24},{28,9,19,3,34,7},{6,10,18,22,11,25}};
+    sliding (grid);
 
-    // grid = {{1,14,2,4,6,18},{9,13,3,17,11,33},{19,7,16,10,5,12},{8,26,20,15,22,24},{21,31,27,29,23,30},{25,0,32,28,34,35}};
+    grid = {{1,14,2,4,6,18},{9,13,3,17,11,33},{19,7,16,10,5,12},{8,26,20,15,22,24},{21,31,27,29,23,30},{25,0,32,28,34,35}};
     // sliding (grid);
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     std::cout << "\nProcess took " << elapsed.count()  << " ms" << std::endl;
-}
-
-bool is_complete (const string &grid, int sweep) { // check for complete line
-    int size = grid.size(), y = sweep * N;
-
-    for (int x = 0; x < N; x++) {
-        if (grid[y + x] != (y + x + 1))
-            return false;
-    }
-
-    return true;
-}
-
-int hamming2 (const string &grid) {
-  int sum = 0, dist, coef;
-
-  for (int i = 0; i < grid.size(); i++) {
-      if (grid[i] != 0) {
-          int j = grid[i] - 1;
-          dist = abs (i % N - j % N) + abs (i / N - j / N);
-
-          // if (i / size == phase || i % size == phase) {
-          //     coef = 2;
-          // } else {
-          //     coef = 1;
-          // }
-          sum += dist * coef;
-      }
-  }
-
-  return sum;
 }
